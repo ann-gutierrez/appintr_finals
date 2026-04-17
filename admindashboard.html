@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en" class="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>BorrowBox Admin Dashboard</title>
+    <script src="js/theme-init.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700
+,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3211d4",
+              "background-light": "#f6f6f8",
+              "background-dark": "#131022",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased transition-colors duration-200"
+  >
+    <div class="relative flex min-h-screen w-full flex-col">
+      <!-- Top Navbar -->
+      <header
+        class="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdropblur-md px-6"
+      >
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 text-primary">
+            <span class="material-symbols-outlined text-3xl font-bold"
+              >package_2</span
+            >
+            <h2 class="text-xl font-bold tracking-tight">BorrowBox</h2>
+          </div>
+          <div class="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+          <h1 class="text-sm font-semibold text-slate-600 dark:text-slate-400">
+            Admin Dashboard
+          </h1>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="hidden md:flex relative group">
+            <span
+              class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"
+              >search</span
+            >
+            <input
+              class="h-10 w-64 rounded-lg border-slate-200 dark:border-slate-800 bgslate-100 dark:bg-slate-900 pl-10 pr-4 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+              placeholder="Search records..."
+              type="text"
+            />
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              class="flex h-10 w-10 items-center justify-center rounded-lg hover:bgslate-100 dark:hover:bg-slate-800 transition-colors relative"
+              type="button"
+            >
+              <span
+                class="material-symbols-outlined text-slate-600 dark:text-slate300"
+                >notifications</span
+              >
+              <span
+                class="absolute top-2.5 right-2.5 flex h-2 w-2 rounded-full bg-red-500 border-2 border-white dark:border-background-dark"
+              ></span>
+            </button>
+            <button
+              id="themeToggle"
+              class="flex h-10 w-10 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              type="button"
+              aria-label="Toggle dark mode"
+              title="Toggle dark mode"
+            >
+              <span
+                id="themeIcon"
+                class="material-symbols-outlined text-slate-600 dark:textslate-300"
+                >dark_mode</span
+              >
+            </button>
+          </div>
+          <div
+            class="flex items-center gap-3 pl-2 border-l border-slate-200 dark:borderslate-800"
+          >
+            <div class="flex flex-col items-end text-xs">
+              <span class="font-bold">Dr. Sarah Miller</span>
+              <span class="text-slate-500">System Admin</span>
+            </div>
+            <div
+              class="h-10 w-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                alt="Profile Avatar"
+                class="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aidapublic/AB6AXuADN3bvfY6DHfKVx8U2MI1tqek1n7pFF7spt4QlQmHqHFwJhF3ZUb-h4VmEUuJb6DFAZtOS0FmfxAIMJWXLZFu4CX9bIoifOHb2wBBhe7awuE8WA03VL2eFtb-
+xsHWcW2WCopNTFmIO9PEaUDjuQRd7_8vq1Xi3gWiOaE8rK1oO8iW9749gn3xxbRlHscSwtsHs5Po302Yv2hrvMmoN2GwzKtBpMT3SwOQODaDm__Brq8lDH_OrXrlQ7fvzK4_RTLLWMCyhErsO8"
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside
+          class="hidden lg:flex w-72 flex-col border-r border-slate-200 dark:borderslate-800 bg-white dark:bg-background-dark p-4 overflow-y-auto"
+        >
+          <nav class="space-y-1">
+            <p
+              class="px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb2"
+            >
+              General
+            </p>
+            <a
+              class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white font-medium"
+              href="admindashboard.html"
+            >
+              <span class="material-symbols-outlined text-xl">grid_view</span>
+              <span class="text-sm">Dashboard</span>
+            </a>
+            <div class="pt-4 pb-2">
+              <p
+                class="px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2"
+              >
+                Management
+              </p>
+              <!-- User Management -->
+              <button
+                class="menu-toggle w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                type="button"
+                data-target="userManagementMenu"
+                aria-expanded="false"
+              >
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-xl">group</span>
+                  <span class="text-sm">User Management</span>
+                </div>
+                <span class="material-symbols-outlined text-sm menu-arrow"
+                  >expand_more</span
+                >
+              </button>
+              <div
+                id="userManagementMenu"
+                class="hidden ml-5 mt-1 space-y-1 border-l borderslate-200 dark:border-slate-700 pl-4"
+              >
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="student.html"
+                >
+                  <span class="material-symbols-outlined text-lg">school</span>
+                  <span>Students</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="employees.html"
+                >
+                  <span class="material-symbols-outlined text-lg">badge</span>
+                  <span>Employees</span>
+                </a>
+              </div>
+              <!-- Inventory -->
+              <button
+                class="menu-toggle mt-1 w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                type="button"
+                data-target="inventoryMenu"
+                aria-expanded="false"
+              >
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-xl"
+                    >inventory_2</span
+                  >
+                  <span class="text-sm">Inventory</span>
+                </div>
+                <span class="material-symbols-outlined text-sm menu-arrow"
+                  >expand_more</span
+                >
+              </button>
+              <div
+                id="inventoryMenu"
+                class="hidden ml-5 mt-1 space-y-1 border-l borderslate-200 dark:border-slate-700 pl-4"
+              >
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="itemmasterfile.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >inventory</span
+                  >
+                  <span>Item Masterfile</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="itemmanagement.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >edit_note</span
+                  >
+                  <span>Item Management</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="incoming.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >south_west</span
+                  >
+                  <span>Incoming</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="outgoing.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >north_east</span
+                  >
+                  <span>Outgoing</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="stockreport.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >assessment</span
+                  >
+                  <span>Stock Report</span>
+                </a>
+              </div>
+            </div>
+            <div class="pt-4 pb-2">
+              <p
+                class="px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2"
+              >
+                Operations
+              </p>
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                href="borrowingrequests.html"
+              >
+                <span class="material-symbols-outlined text-xl">handshake</span>
+                <span class="text-sm">Borrowing Requests</span>
+                <span
+                  class="ml-auto bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold"
+                  >12</span
+                >
+              </a>
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                href="returns.html"
+              >
+                <span class="material-symbols-outlined text-xl"
+                  >assignment_return</span
+                >
+                <span class="text-sm">Returns</span>
+              </a>
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                href="borrowinghistory.html"
+              >
+                <span class="material-symbols-outlined text-xl">history</span>
+                <span class="text-sm">Borrowing History</span>
+              </a>
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-red-500 transition-colors"
+                href="overdueitems.html"
+              >
+                <span class="material-symbols-outlined text-xl"
+                  >error_outline</span
+                >
+                <span class="text-sm font-medium">Overdue Items</span>
+                <span
+                  class="ml-auto bg-red-100 text-red-600 text-[10px] px-2 py-0.5 roundedfull font-bold"
+                  >3</span
+                >
+              </a>
+            </div>
+            <div class="pt-4 pb-2">
+              <p
+                class="px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2"
+              >
+                Systems
+              </p>
+              <a
+                class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                href="reports.html"
+              >
+                <span class="material-symbols-outlined text-xl">analytics</span>
+                <span class="text-sm">Reports</span>
+              </a>
+              <button
+                class="menu-toggle mt-1 w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                type="button"
+                data-target="systemSettingsMenu"
+                aria-expanded="false"
+              >
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-xl"
+                    >settings</span
+                  >
+                  <span class="text-sm">System Settings</span>
+                </div>
+                <span class="material-symbols-outlined text-sm menu-arrow"
+                  >expand_more</span
+                >
+              </button>
+              <div
+                id="systemSettingsMenu"
+                class="hidden ml-5 mt-1 space-y-1 border-l borderslate-200 dark:border-slate-700 pl-4"
+              >
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="rolemanagement.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >admin_panel_settings</span
+                  >
+                  <span>Role Management</span>
+                </a>
+                <a
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  href="auditlogs.html"
+                >
+                  <span class="material-symbols-outlined text-lg"
+                    >receipt_long</span
+                  >
+                  <span>Audit Logs</span>
+                </a>
+              </div>
+            </div>
+          </nav>
+          <div class="mt-auto space-y-3 pt-4">
+            <a
+              href="signin.html"
+              class="flex items-center justify-center gap-2 w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-100 transition-colors dark:border-red-900/40 dark:bg-red-900/20 dark:text-red400 dark:hover:bg-red-900/30"
+            >
+              <span class="material-symbols-outlined text-lg">logout</span>
+              <span>Sign Out</span>
+            </a>
+            <div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
+              <p class="text-xs font-semibold text-primary mb-1">
+                Academic Year 25/26
+              </p>
+              <p class="text-[10px] text-slate-500 leading-tight">
+                Server status: Operational<br />Last backup: 2h ago
+              </p>
+            </div>
+          </div>
+        </aside>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-6 md:p-8 space-y-8">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4"
+          >
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-primary bg-primary/10 p-2 rounded-lg"
+                  >person</span
+                >
+                <span class="text-xs text-green-500 font-bold">+2.4%</span>
+              </div>
+              <p class="text-sm text-slate-500">Total Users</p>
+              <p class="text-2xl font-bold">1,240</p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-slate-600 dark:text-slate-400 bgslate-100 dark:bg-slate-800 p-2 rounded-lg"
+                  >category</span
+                >
+              </div>
+              <p class="text-sm text-slate-500">Total Items</p>
+              <p class="text-2xl font-bold">450</p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-emerald-500 bg-emerald-500/10 p-2 rounded-lg"
+                  >check_circle</span
+                >
+              </div>
+              <p class="text-sm text-slate-500">Available</p>
+              <p class="text-2xl font-bold">380</p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-blue-500 bg-blue-500/10 p-2 rounded-lg"
+                  >shopping_cart</span
+                >
+              </div>
+              <p class="text-sm text-slate-500">Borrowed</p>
+              <p class="text-2xl font-bold">70</p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-amber-500 bg-amber-500/10 p-2 rounded-lg"
+                  >pending_actions</span
+                >
+              </div>
+              <p class="text-sm text-slate-500">Pending</p>
+              <p class="text-2xl font-bold">12</p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-red-200 dark:border-red-900 shadow-sm hover:shadow-md transition-shadow"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="material-symbols-outlined text-red-500 bg-red-500/10 p-2 rounded-lg"
+                  >warning</span
+                >
+              </div>
+              <p class="text-sm text-slate-500">Overdue</p>
+              <p class="text-2xl font-bold text-red-600">3</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold">Borrowing Activity</h3>
+                <select
+                  class="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-xs font-semibold focus:ring-primary py-1.5 pl-3 pr-8"
+                >
+                  <option>Last 7 Days</option>
+                  <option>Last 30 Days</option>
+                </select>
+              </div>
+              <div class="relative h-48 w-full">
+                <svg
+                  class="w-full h-full"
+                  preserveAspectRatio="none"
+                  viewBox="0 0 500 150"
+                >
+                  <defs>
+                    <linearGradient
+                      id="gradientLine"
+                      x1="0"
+                      x2="0"
+                      y1="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stop-color="#3211d4"
+                        stop-opacity="0.2"
+                      ></stop>
+                      <stop
+                        offset="100%"
+                        stop-color="#3211d4"
+                        stop-opacity="0"
+                      ></stop>
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M0,120 Q50,40 100,80 T200,60 T300,100 T400,20 T500,70 V150 H0 Z"
+                    fill="url(#gradientLine)"
+                  ></path>
+                  <path
+                    d="M0,120 Q50,40 100,80 T200,60 T300,100 T400,20 T500,70"
+                    fill="none"
+                    stroke="#3211d4"
+                    stroke-linecap="round"
+                    stroke-width="3"
+                  ></path>
+                </svg>
+                <div
+                  class="flex justify-between mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2"
+                >
+                  <span>Mon</span><span>Tue</span><span>Wed</span
+                  ><span>Thu</span><span>Fri</span><span>Sat</span
+                  ><span>Sun</span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm"
+            >
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-bold">Top Categories</h3>
+                <button
+                  class="text-primary text-xs font-bold hover:underline"
+                  type="button"
+                >
+                  View Report
+                </button>
+              </div>
+              <div class="space-y-4">
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs font-medium">
+                    <span>Academic Books</span>
+                    <span>85%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary rounded-full"
+                      style="width: 85%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs font-medium">
+                    <span>Laptops & Tablets</span>
+                    <span>62%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary/70 rounded-full"
+                      style="width: 62%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs font-medium">
+                    <span>Lab Equipment</span>
+                    <span>45%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary/50 rounded-full"
+                      style="width: 45%"
+                    ></div>
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-xs font-medium">
+                    <span>Sports Gear</span>
+                    <span>28%</span>
+                  </div>
+                  <div
+                    class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"
+                  >
+                    <div
+                      class="h-full bg-primary/30 rounded-full"
+                      style="width: 28%"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <div class="xl:col-span-3 space-y-6">
+              <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+              >
+                <div
+                  class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
+                >
+                  <h3 class="font-bold">Recent Borrow Requests</h3>
+                  <button class="text-xs text-primary font-bold" type="button">
+                    View All
+                  </button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead
+                      class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 fontsemibold uppercase text-[10px] tracking-wider"
+                    >
+                      <tr>
+                        <th class="px-6 py-3">Borrower</th>
+                        <th class="px-6 py-3">Item Name</th>
+                        <th class="px-6 py-3">Date</th>
+                        <th class="px-6 py-3 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      class="divide-y divide-slate-100 dark:divide-slate-800"
+                    >
+                      <tr
+                        class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transitioncolors"
+                      >
+                        <td class="px-6 py-4 flex items-center gap-3">
+                          <div
+                            class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
+                          >
+                            JD
+                          </div>
+                          <div>
+                            <p class="font-semibold">John Doe</p>
+                            <p class="text-[10px] text-slate-500">
+                              Student ID: 4920
+                            </p>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 font-medium">
+                          MacBook Pro 14" (Lab 4)
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 text-xs">
+                          Oct 12, 10:45 AM
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                          <button
+                            class="bg-primary text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-primary/90"
+                            type="button"
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                      <tr
+                        class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transitioncolors"
+                      >
+                        <td class="px-6 py-4 flex items-center gap-3">
+                          <div
+                            class="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
+                          >
+                            AS
+                          </div>
+                          <div>
+                            <p class="font-semibold">Alice Smith</p>
+                            <p class="text-[10px] text-slate-500">
+                              Staff ID: S-221
+                            </p>
+                          </div>
+                        </td>
+                        <td class="px-6 py-4 font-medium">DSLR Camera Kit</td>
+                        <td class="px-6 py-4 text-slate-500 text-xs">
+                          Oct 12, 09:30 AM
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                          <button
+                            class="bg-primary text-white px-3 py-1 rounded text-[11px] font-bold hover:bg-primary/90"
+                            type="button"
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+              >
+                <div
+                  class="px-6 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between"
+                >
+                  <h3 class="font-bold">Recent Returns</h3>
+                  <button class="text-xs text-primary font-bold" type="button">
+                    View All
+                  </button>
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead
+                      class="bg-slate-50 dark:bg-slate-800/50 text-slate-500 fontsemibold uppercase text-[10px] tracking-wider"
+                    >
+                      <tr>
+                        <th class="px-6 py-3">Borrower</th>
+                        <th class="px-6 py-3">Item</th>
+                        <th class="px-6 py-3">Return Time</th>
+                        <th class="px-6 py-3 text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      class="divide-y divide-slate-100 dark:divide-slate-800"
+                    >
+                      <tr
+                        class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transitioncolors"
+                      >
+                        <td class="px-6 py-4 font-semibold">Robert Wilson</td>
+                        <td class="px-6 py-4">Bio Lab Microscope v2</td>
+                        <td class="px-6 py-4 text-slate-500 text-xs">
+                          Oct 11, 04:20 PM
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                          <span
+                            class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-2 py-1 rounded-full text-[10px] font-bold"
+                            >Good Condition</span
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="xl:col-span-1 space-y-6">
+              <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-red-200 dark:border-red-900 shadow-sm overflow-hidden"
+              >
+                <div
+                  class="bg-red-500 px-4 py-3 flex items-center gap-2 text-white"
+                >
+                  <span class="material-symbols-outlined text-sm"
+                    >emergency_home</span
+                  >
+                  <h3 class="text-sm font-bold uppercase tracking-wider">
+                    Critical Alerts
+                  </h3>
+                </div>
+                <div class="p-4 space-y-4">
+                  <div
+                    class="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red100 dark:border-red-900/30 flex gap-3"
+                  >
+                    <span
+                      class="material-symbols-outlined text-red-600 text-xl shrink0"
+                      >warning</span
+                    >
+                    <div>
+                      <p
+                        class="text-xs font-bold text-red-700 dark:text-red-400"
+                      >
+                        Overdue: VR Headset #04
+                      </p>
+                      <p class="text-[10px] text-red-600/80">
+                        Borrower: Marcus Chen
+                      </p>
+                      <p class="text-[10px] text-red-600/80">Due: 3 days ago</p>
+                    </div>
+                  </div>
+                  <div
+                    class="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red100 dark:border-red-900/30 flex gap-3"
+                  >
+                    <span
+                      class="material-symbols-outlined text-red-600 text-xl shrink0"
+                      >warning</span
+                    >
+                    <div>
+                      <p
+                        class="text-xs font-bold text-red-700 dark:text-red-400"
+                      >
+                        Overdue: Financial Calc X
+                      </p>
+                      <p class="text-[10px] text-red-600/80">
+                        Borrower: Sarah Kay
+                      </p>
+                      <p class="text-[10px] text-red-600/80">Due: 1 day ago</p>
+                    </div>
+                  </div>
+                  <div
+                    class="p-3 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red100 dark:border-red-900/30 flex gap-3"
+                  >
+                    <span
+                      class="material-symbols-outlined text-red-600 text-xl shrink0"
+                      >warning</span
+                    >
+                    <div>
+                      <p
+                        class="text-xs font-bold text-red-700 dark:text-red-400"
+                      >
+                        Overdue: 3D Scanner Lite
+                      </p>
+                      <p class="text-[10px] text-red-600/80">
+                        Borrower: Leo Mendez
+                      </p>
+                      <p class="text-[10px] text-red-600/80">Due: 2 days ago</p>
+                    </div>
+                  </div>
+                  <button
+                    class="w-full py-2 text-xs font-bold text-red-600 border borderred-200 dark:border-red-900 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transitioncolors"
+                    type="button"
+                  >
+                    Send Reminders to All
+                  </button>
+                </div>
+              </div>
+              <div
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm"
+              >
+                <h4
+                  class="text-xs font-bold uppercase text-slate-400 tracking-widest mb4"
+                >
+                  Live System Logs
+                </h4>
+                <div class="space-y-4">
+                  <div class="flex gap-3 text-xs">
+                    <div
+                      class="shrink-0 h-1.5 w-1.5 mt-1 rounded-full bg-primary"
+                    ></div>
+                    <div>
+                      <p class="text-slate-400 text-[10px]">10:52 AM</p>
+                      <p>New user registered: <b>Liam Moore</b></p>
+                    </div>
+                  </div>
+                  <div class="flex gap-3 text-xs">
+                    <div
+                      class="shrink-0 h-1.5 w-1.5 mt-1 rounded-full bg-emerald-500"
+                    ></div>
+                    <div>
+                      <p class="text-slate-400 text-[10px]">10:48 AM</p>
+                      <p>Inventory update: <b>5 items added</b> to Library</p>
+                    </div>
+                  </div>
+                  <div class="flex gap-3 text-xs">
+                    <div
+                      class="shrink-0 h-1.5 w-1.5 mt-1 rounded-full bg-amber-500"
+                    ></div>
+                    <div>
+                      <p class="text-slate-400 text-[10px]">10:35 AM</p>
+                      <p>Auto-backup completed successfully</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="js/admindashboard.js"></script>
+  </body>
+</html>
