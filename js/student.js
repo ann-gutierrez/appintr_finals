@@ -67,6 +67,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const editPhone = document.getElementById("edit_phone");
   const editPhoto = document.getElementById("edit_photo");
 
+  // Delete modal
+  const deleteStudentModal = document.getElementById("deleteStudentModal");
+  const closeDeleteStudentModal = document.getElementById(
+    "closeDeleteStudentModal",
+  );
+  const cancelDeleteStudent = document.getElementById("cancelDeleteStudent");
+  const confirmDeleteStudentButton = document.getElementById(
+    "confirmDeleteStudentButton",
+  );
+  const deleteStudentId = document.getElementById("delete_student_id");
+  const deleteStudentName = document.getElementById("deleteStudentName");
+
   // ── Helpers ───────────────────────────────────────────────────────────────
   function getInitials(firstName = "", lastName = "") {
     return `${lastName.charAt(0).toUpperCase()}${firstName.charAt(0).toUpperCase()}`;
@@ -100,7 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     container.textContent = "";
   }
 
-  // ── Modal helpers ─────────────────────────────────────────────────────────
   function openModal(modal) {
     modal.classList.remove("hidden");
     modal.classList.add("flex");
@@ -115,27 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (msgEl) clearFormMessage(msgEl);
   }
 
-  // ── Filter population ─────────────────────────────────────────────────────
-  function populateFilters(students) {
-    const colleges = [
-      ...new Set(students.map((s) => s.college).filter(Boolean)),
-    ].sort();
-    const departments = [
-      ...new Set(students.map((s) => s.department).filter(Boolean)),
-    ].sort();
-
-    collegeFilter.innerHTML = `<option value="">All Colleges</option>`;
-    departmentFilter.innerHTML = `<option value="">All Departments</option>`;
-
-    colleges.forEach((c) => {
-      collegeFilter.innerHTML += `<option value="${c}">${c}</option>`;
-    });
-    departments.forEach((d) => {
-      departmentFilter.innerHTML += `<option value="${d}">${d}</option>`;
-    });
-  }
-
-  // ── Render table ──────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────
   function renderStudents(students) {
     if (!students.length) {
       studentsTableBody.innerHTML = `
@@ -149,338 +140,105 @@ document.addEventListener("DOMContentLoaded", () => {
     studentsTableBody.innerHTML = students
       .map((student) => {
         const photoHtml = student.photo
-          ? `<img src="${student.photo}" alt="${student.first_name} ${student.last_name}" class="size-10 rounded-full bg-slate-100 object-cover" />`
-          : `<div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold">${getInitials(student.first_name, student.last_name)}</div>`;
+          ? `<img src="${student.photo}" class="size-10 rounded-full object-cover"/>`
+          : `<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold">${getInitials(student.first_name, student.last_name)}</div>`;
 
         return `
-        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
-          <td class="px-6 py-4">
-            <div class="flex items-center gap-3">
-              ${photoHtml}
-              <div>
-                <p class="font-bold text-slate-900 dark:text-slate-100">${student.last_name}, ${student.first_name}${student.middle_initial ? ` ${student.middle_initial}.` : ""}</p>
-                <p class="text-xs text-slate-500">ID: ${student.student_number}</p>
-              </div>
+      <tr>
+        <td class="px-6 py-4">
+          <div class="flex items-center gap-3">
+            ${photoHtml}
+            <div>
+              <p class="font-bold">${student.last_name}, ${student.first_name}</p>
+              <p class="text-xs">ID: ${student.student_number}</p>
             </div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="text-sm">
-              <p class="font-semibold text-slate-700 dark:text-slate-200">${student.college ?? "-"}</p>
-              <p class="text-xs text-slate-500">${student.course ?? "-"}</p>
-              <p class="text-xs text-slate-400 mt-1">${student.department ?? "-"}</p>
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <div class="text-sm">
-              <p class="text-slate-700 dark:text-slate-200 flex items-center gap-1">
-                <span class="material-symbols-outlined text-sm">phone</span>
-                ${student.phone ?? "-"}
-              </p>
-              <p class="text-xs text-slate-500">${student.email ?? "-"}</p>
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getGenderBadgeClass(student.gender)}">
-              ${student.gender ?? "-"}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-right">
-            <div class="flex justify-end gap-2">
-              <button class="view-student-btn p-2 text-slate-400 hover:text-primary transition-colors" title="View" data-student-id="${student.id}">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-              <button class="edit-student-btn p-2 text-slate-400 hover:text-blue-500 transition-colors" title="Edit" data-student-id="${student.id}">
-                <span class="material-symbols-outlined">edit</span>
-              </button>
-              <button class="delete-student-btn p-2 text-slate-400 hover:text-red-500 transition-colors" title="Delete" data-student-id="${student.id}">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </div>
-          </td>
-        </tr>`;
+          </div>
+        </td>
+        <td class="px-6 py-4">
+          <p>${student.college ?? "-"}</p>
+          <p class="text-xs">${student.course ?? "-"}</p>
+        </td>
+        <td class="px-6 py-4">
+          <p>${student.phone ?? "-"}</p>
+          <p class="text-xs">${student.email ?? "-"}</p>
+        </td>
+        <td class="px-6 py-4">
+          <span class="${getGenderBadgeClass(student.gender)} px-2 py-1 rounded text-xs">
+            ${student.gender ?? "-"}
+          </span>
+        </td>
+        <td class="px-6 py-4 text-right">
+          <button class="view-student-btn" data-student-id="${student.id}">View</button>
+          <button class="edit-student-btn" data-student-id="${student.id}">Edit</button>
+          <button class="delete-student-btn" data-student-id="${student.id}">Delete</button>
+        </td>
+      </tr>`;
       })
       .join("");
-
-    studentsSummary.innerHTML = `Showing <span class="font-semibold">${students.length}</span> student${students.length !== 1 ? "s" : ""}`;
 
     bindViewButtons();
     bindEditButtons();
     bindDeleteButtons();
   }
 
-  // ── View modal fill ───────────────────────────────────────────────────────
-  function fillViewModal(student) {
-    const fullName = `${student.last_name}, ${student.first_name}${student.middle_initial ? ` ${student.middle_initial}.` : ""}`;
-    viewFullName.textContent = fullName;
-    viewStudentNumber.textContent = `Student Number: ${student.student_number ?? "-"}`;
-    viewFirstName.textContent = student.first_name ?? "-";
-    viewLastName.textContent = student.last_name ?? "-";
-    viewMiddleInitial.textContent = student.middle_initial ?? "-";
-    viewGenderText.textContent = student.gender ?? "-";
-    viewCollege.textContent = student.college ?? "-";
-    viewDepartment.textContent = student.department ?? "-";
-    viewCourse.textContent = student.course ?? "-";
-    viewEmail.textContent = student.email ?? "-";
-    viewPhone.textContent = student.phone ?? "-";
-
-    viewGenderBadge.className = `inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getGenderBadgeClass(student.gender)}`;
-    viewGenderBadge.textContent = student.gender ?? "-";
-
-    if (student.photo) {
-      viewStudentPhotoWrapper.innerHTML = `<img src="${student.photo}" alt="${student.first_name} ${student.last_name}" class="h-full w-full object-cover" />`;
-    } else {
-      viewStudentPhotoWrapper.textContent = getInitials(
-        student.first_name,
-        student.last_name,
-      );
-    }
-  }
-
-  // ── Edit modal fill ───────────────────────────────────────────────────────
-  function fillEditModal(student) {
-    editStudentId.value = student.id;
-    editStudentNumber.value = student.student_number ?? "";
-    editLastName.value = student.last_name ?? "";
-    editFirstName.value = student.first_name ?? "";
-    editMiddleInitial.value = student.middle_initial ?? "";
-    editGender.value = student.gender ?? "";
-    editCollege.value = student.college ?? "";
-    editDepartment.value = student.department ?? "";
-    editCourse.value = student.course ?? "";
-    editEmail.value = student.email ?? "";
-    editPhone.value = student.phone ?? "";
-  }
-
-  // ── Button bindings ───────────────────────────────────────────────────────
-  function bindViewButtons() {
-    document.querySelectorAll(".view-student-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.dataset.studentId);
-        const student = allStudents.find((s) => s.id === id);
-        if (!student) return;
-        fillViewModal(student);
-        openModal(viewStudentModal);
-      });
-    });
-  }
-
-  function bindEditButtons() {
-    document.querySelectorAll(".edit-student-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const id = Number(btn.dataset.studentId);
-        const student = allStudents.find((s) => s.id === id);
-        if (!student) return;
-        fillEditModal(student);
-        openModal(editStudentModal);
-        clearFormMessage(editStudentMessage);
-      });
-    });
+  // ── Delete logic ──────────────────────────────────────────────────────────
+  function fillDeleteModal(student) {
+    deleteStudentId.value = student.id;
+    deleteStudentName.textContent = `${student.last_name}, ${student.first_name}`;
   }
 
   function bindDeleteButtons() {
     document.querySelectorAll(".delete-student-btn").forEach((btn) => {
-      btn.addEventListener("click", async () => {
+      btn.addEventListener("click", () => {
         const id = Number(btn.dataset.studentId);
         const student = allStudents.find((s) => s.id === id);
         if (!student) return;
-        const confirmed = confirm(
-          `Delete student "${student.last_name}, ${student.first_name}"? This cannot be undone.`,
-        );
-        if (!confirmed) return;
-        try {
-          const response = await fetch(`${API_BASE_URL}/students/${id}/`, {
-            method: "DELETE",
-          });
-          if (!response.ok)
-            throw new Error(`Failed to delete. Status: ${response.status}`);
-          await loadStudents();
-        } catch (err) {
-          console.error("Delete error:", err);
-          alert("Failed to delete student. Please try again.");
-        }
+
+        fillDeleteModal(student);
+        openModal(deleteStudentModal);
       });
     });
   }
 
-  // ── Filter logic ──────────────────────────────────────────────────────────
-  function applyFilters() {
-    const search = studentSearch.value.trim().toLowerCase();
-    const college = collegeFilter.value;
-    const department = departmentFilter.value;
-    const gender = genderFilter.value;
-
-    const filtered = allStudents.filter((s) => {
-      const fullName =
-        `${s.last_name} ${s.first_name} ${s.middle_initial ?? ""}`.toLowerCase();
-      const num = (s.student_number ?? "").toLowerCase();
-      return (
-        (!search || fullName.includes(search) || num.includes(search)) &&
-        (!college || s.college === college) &&
-        (!department || s.department === department) &&
-        (!gender || s.gender === gender)
-      );
-    });
-
-    renderStudents(filtered);
-  }
-
-  // ── API calls ─────────────────────────────────────────────────────────────
-  async function loadStudents() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/students/`);
-      if (!response.ok)
-        throw new Error(`Failed to fetch students: ${response.status}`);
-      allStudents = await response.json();
-      populateFilters(allStudents);
-      renderStudents(allStudents);
-    } catch (err) {
-      console.error("Students error:", err);
-      studentsTableBody.innerHTML = `
-        <tr>
-          <td colspan="5" class="px-6 py-10 text-center text-sm text-red-500">Failed to load students. Is the backend running?</td>
-        </tr>`;
-      studentsSummary.innerHTML = `Showing <span class="font-semibold">0</span> students`;
-    }
-  }
-
-  async function submitAddStudent(event) {
-    event.preventDefault();
-    clearFormMessage(addStudentMessage);
-    saveStudentButton.disabled = true;
-    saveStudentButton.textContent = "Saving...";
+  async function confirmDeleteStudent() {
+    confirmDeleteStudentButton.disabled = true;
+    confirmDeleteStudentButton.textContent = "Deleting...";
 
     try {
-      const formData = new FormData(addStudentForm);
-      const response = await fetch(`${API_BASE_URL}/students/`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        let msg = `Failed to save student. Status: ${response.status}`;
-        try {
-          msg = JSON.stringify(await response.json());
-        } catch {}
-        throw new Error(msg);
-      }
-
-      showFormMessage(
-        addStudentMessage,
-        "Student added successfully.",
-        "success",
-      );
-      await loadStudents();
-      setTimeout(
-        () => closeModal(addStudentModal, addStudentForm, addStudentMessage),
-        800,
-      );
-    } catch (err) {
-      console.error("Add student error:", err);
-      showFormMessage(addStudentMessage, err.message, "error");
-    } finally {
-      saveStudentButton.disabled = false;
-      saveStudentButton.textContent = "Save Student";
-    }
-  }
-
-  async function submitEditStudent(event) {
-    event.preventDefault();
-    clearFormMessage(editStudentMessage);
-    updateStudentButton.disabled = true;
-    updateStudentButton.textContent = "Updating...";
-
-    try {
-      const id = editStudentId.value;
-      const formData = new FormData(editStudentForm);
-
-      // Don't send photo field if no new file was chosen
-      if (!editPhoto.files.length) formData.delete("photo");
+      const id = deleteStudentId.value;
 
       const response = await fetch(`${API_BASE_URL}/students/${id}/`, {
-        method: "PATCH",
-        body: formData,
+        method: "DELETE",
       });
 
-      if (!response.ok) {
-        let msg = `Failed to update student. Status: ${response.status}`;
-        try {
-          msg = JSON.stringify(await response.json());
-        } catch {}
-        throw new Error(msg);
-      }
+      if (!response.ok) throw new Error();
 
-      showFormMessage(
-        editStudentMessage,
-        "Student updated successfully.",
-        "success",
-      );
       await loadStudents();
-      setTimeout(
-        () => closeModal(editStudentModal, editStudentForm, editStudentMessage),
-        800,
-      );
-    } catch (err) {
-      console.error("Edit student error:", err);
-      showFormMessage(editStudentMessage, err.message, "error");
+
+      setTimeout(() => closeModal(deleteStudentModal), 500);
+    } catch {
+      alert("Failed to delete student.");
     } finally {
-      updateStudentButton.disabled = false;
-      updateStudentButton.textContent = "Update Student";
+      confirmDeleteStudentButton.disabled = false;
+      confirmDeleteStudentButton.textContent = "Delete Student";
     }
   }
 
-  // ── Event listeners ───────────────────────────────────────────────────────
-  studentSearch.addEventListener("input", applyFilters);
-  collegeFilter.addEventListener("change", applyFilters);
-  departmentFilter.addEventListener("change", applyFilters);
-  genderFilter.addEventListener("change", applyFilters);
-
-  resetFilters.addEventListener("click", () => {
-    studentSearch.value = "";
-    collegeFilter.value = "";
-    departmentFilter.value = "";
-    genderFilter.value = "";
+  // ── API ───────────────────────────────────────────────────────────────────
+  async function loadStudents() {
+    const res = await fetch(`${API_BASE_URL}/students/`);
+    allStudents = await res.json();
     renderStudents(allStudents);
-  });
+  }
 
-  openAddStudentModal.addEventListener("click", () => {
-    clearFormMessage(addStudentMessage);
-    openModal(addStudentModal);
-  });
-  closeAddStudentModal.addEventListener("click", () =>
-    closeModal(addStudentModal, addStudentForm, addStudentMessage),
+  // ── Events ────────────────────────────────────────────────────────────────
+  confirmDeleteStudentButton.addEventListener("click", confirmDeleteStudent);
+  closeDeleteStudentModal.addEventListener("click", () =>
+    closeModal(deleteStudentModal),
   );
-  cancelAddStudent.addEventListener("click", () =>
-    closeModal(addStudentModal, addStudentForm, addStudentMessage),
+  cancelDeleteStudent.addEventListener("click", () =>
+    closeModal(deleteStudentModal),
   );
-  addStudentModal.addEventListener("click", (e) => {
-    if (e.target === addStudentModal)
-      closeModal(addStudentModal, addStudentForm, addStudentMessage);
-  });
 
-  closeViewStudentModal.addEventListener("click", () =>
-    closeModal(viewStudentModal),
-  );
-  viewStudentDoneButton.addEventListener("click", () =>
-    closeModal(viewStudentModal),
-  );
-  viewStudentModal.addEventListener("click", (e) => {
-    if (e.target === viewStudentModal) closeModal(viewStudentModal);
-  });
-
-  closeEditStudentModal.addEventListener("click", () =>
-    closeModal(editStudentModal, editStudentForm, editStudentMessage),
-  );
-  cancelEditStudent.addEventListener("click", () =>
-    closeModal(editStudentModal, editStudentForm, editStudentMessage),
-  );
-  editStudentModal.addEventListener("click", (e) => {
-    if (e.target === editStudentModal)
-      closeModal(editStudentModal, editStudentForm, editStudentMessage);
-  });
-
-  addStudentForm.addEventListener("submit", submitAddStudent);
-  editStudentForm.addEventListener("submit", submitEditStudent);
-
-  // ── Init ──────────────────────────────────────────────────────────────────
   loadStudents();
 });
