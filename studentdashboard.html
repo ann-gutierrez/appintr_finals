@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MentorMatch — Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght,FILL@400,1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: "#5B4FCF",
+              surface: "#F7F6FF",
+              card: "#FFFFFF",
+              accent: "#F0A500",
+              muted: "#8B87A8",
+            },
+            fontFamily: {
+              sans: ['"DM Sans"', "sans-serif"],
+              display: ['"DM Serif Display"', "serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: #f7f6ff;
+      }
+      .material-symbols-rounded {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .hero-gradient {
+        background: linear-gradient(
+          135deg,
+          #5b4fcf 0%,
+          #7c6fea 60%,
+          #a89df5 100%
+        );
+      }
+      .card-glow {
+        box-shadow: 0 4px 24px 0 rgba(91, 79, 207, 0.1);
+      }
+      .task-done {
+        text-decoration: line-through;
+        opacity: 0.5;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(18px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.5s ease both;
+      }
+      .fade-up-2 {
+        animation: fadeUp 0.5s ease 0.08s both;
+      }
+      .fade-up-3 {
+        animation: fadeUp 0.5s ease 0.16s both;
+      }
+      .fade-up-4 {
+        animation: fadeUp 0.5s ease 0.24s both;
+      }
+      .session-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(91, 79, 207, 0.15);
+      }
+      .session-card {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .progress-bar {
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Top Nav -->
+    <nav
+      class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-purple-100 px-6 h-16 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="h-9 w-9 rounded-xl hero-gradient flex items-center justify-center"
+        >
+          <span class="material-symbols-rounded text-white text-xl"
+            >school</span
+          >
+        </div>
+        <span class="font-display text-lg font-semibold text-slate-800"
+          >MentorMatch</span
+        >
+      </div>
+      <div class="flex items-center gap-3">
+        <button
+          class="relative h-9 w-9 rounded-lg hover:bg-purple-50 flex items-center justify-center transition-colors"
+        >
+          <span class="material-symbols-rounded text-muted">notifications</span>
+          <span
+            id="notifDot"
+            class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent hidden"
+          ></span>
+        </button>
+        <a
+          href="browse-mentors.html"
+          class="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand text-white text-sm font-semibold hover:bg-brand/90 transition-colors"
+        >
+          <span class="material-symbols-rounded text-lg">person_search</span>
+          Find a Mentor
+        </a>
+        <div class="flex items-center gap-2 pl-3 border-l border-slate-200">
+          <div
+            id="navAvatar"
+            class="h-9 w-9 rounded-full bg-brand/20 text-brand flex items-center justify-center font-bold text-sm overflow-hidden"
+          ></div>
+          <div class="hidden sm:flex flex-col leading-tight">
+            <span id="navName" class="text-xs font-bold text-slate-800">—</span>
+            <span class="text-[10px] text-muted">Student</span>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <!-- Hero greeting -->
+      <div
+        class="hero-gradient rounded-3xl p-8 text-white relative overflow-hidden fade-up"
+      >
+        <div
+          class="absolute inset-0 opacity-10"
+          style="
+            background-image: radial-gradient(
+              circle at 80% 20%,
+              white 1px,
+              transparent 1px
+            );
+            background-size: 28px 28px;
+          "
+        ></div>
+        <div
+          class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6"
+        >
+          <div>
+            <p class="text-purple-200 text-sm font-medium mb-1">
+              Welcome back 👋
+            </p>
+            <h1
+              class="font-display text-3xl sm:text-4xl font-bold leading-tight"
+              id="greetingName"
+            >
+              Student
+            </h1>
+            <p class="mt-2 text-purple-200 text-sm" id="greetingInfo">
+              Loading your profile…
+            </p>
+          </div>
+          <div class="flex gap-4">
+            <div
+              class="bg-white/15 backdrop-blur rounded-2xl px-5 py-4 text-center min-w-[80px]"
+            >
+              <p id="statSessions" class="text-2xl font-bold">—</p>
+              <p class="text-xs text-purple-200 mt-1">Sessions</p>
+            </div>
+            <div
+              class="bg-white/15 backdrop-blur rounded-2xl px-5 py-4 text-center min-w-[80px]"
+            >
+              <p id="statPending" class="text-2xl font-bold">—</p>
+              <p class="text-xs text-purple-200 mt-1">Pending</p>
+            </div>
+            <div
+              class="bg-white/15 backdrop-blur rounded-2xl px-5 py-4 text-center min-w-[80px]"
+            >
+              <p id="statMentor" class="text-2xl font-bold">—</p>
+              <p class="text-xs text-purple-200 mt-1">Mentor</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- LEFT: Sessions + Tasks -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Upcoming Sessions -->
+          <div class="bg-white rounded-2xl card-glow overflow-hidden fade-up-2">
+            <div
+              class="flex items-center justify-between px-6 py-4 border-b border-slate-100"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-brand"
+                  >calendar_month</span
+                >
+                <h2 class="font-semibold text-slate-800">Upcoming Sessions</h2>
+              </div>
+              <a
+                href="sessions.html"
+                class="text-xs font-semibold text-brand hover:underline"
+                >View all</a
+              >
+            </div>
+            <div id="sessionsContainer" class="divide-y divide-slate-50 px-6">
+              <div class="py-8 text-center text-muted text-sm">
+                Loading sessions…
+              </div>
+            </div>
+          </div>
+
+          <!-- My Tasks -->
+          <div class="bg-white rounded-2xl card-glow overflow-hidden fade-up-3">
+            <div
+              class="flex items-center justify-between px-6 py-4 border-b border-slate-100"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-accent"
+                  >task_alt</span
+                >
+                <h2 class="font-semibold text-slate-800">My Tasks</h2>
+              </div>
+              <button
+                id="addTaskBtn"
+                class="text-xs font-semibold text-brand hover:underline flex items-center gap-1"
+              >
+                <span class="material-symbols-rounded text-sm">add</span> Add
+                task
+              </button>
+            </div>
+            <!-- Add task input (hidden by default) -->
+            <div id="addTaskForm" class="hidden px-6 pt-4 pb-2 flex gap-2">
+              <input
+                id="newTaskInput"
+                type="text"
+                placeholder="What do you need to do?"
+                maxlength="120"
+                class="flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+              />
+              <button
+                id="saveTaskBtn"
+                class="px-4 py-2.5 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand/90"
+              >
+                Add
+              </button>
+            </div>
+            <ul id="tasksList" class="px-6 py-2 space-y-1 min-h-[60px]">
+              <li class="py-6 text-center text-muted text-sm">
+                Loading tasks…
+              </li>
+            </ul>
+          </div>
+
+          <!-- Progress -->
+          <div class="bg-white rounded-2xl card-glow px-6 py-5 fade-up-4">
+            <div class="flex items-center gap-2 mb-4">
+              <span class="material-symbols-rounded text-emerald-500"
+                >trending_up</span
+              >
+              <h2 class="font-semibold text-slate-800">My Progress</h2>
+            </div>
+            <div class="space-y-4" id="progressArea">
+              <div class="space-y-1.5">
+                <div
+                  class="flex justify-between text-xs font-medium text-slate-600"
+                >
+                  <span>Tasks Completed</span
+                  ><span id="progressTasksPct">0%</span>
+                </div>
+                <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    id="progressTasksBar"
+                    class="h-full bg-emerald-400 rounded-full progress-bar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+              <div class="space-y-1.5">
+                <div
+                  class="flex justify-between text-xs font-medium text-slate-600"
+                >
+                  <span>Sessions Attended</span
+                  ><span id="progressSessionsPct">0%</span>
+                </div>
+                <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    id="progressSessionsBar"
+                    class="h-full bg-brand rounded-full progress-bar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Profile + Mentor + Find -->
+        <div class="space-y-6">
+          <!-- My Profile -->
+          <div class="bg-white rounded-2xl card-glow px-6 py-6 fade-up-2">
+            <h3
+              class="text-xs font-bold uppercase tracking-widest text-muted mb-4"
+            >
+              My Profile
+            </h3>
+            <div class="flex flex-col items-center text-center gap-2 mb-4">
+              <div
+                id="profilePhoto"
+                class="h-20 w-20 rounded-full bg-brand/15 text-brand flex items-center justify-center text-2xl font-bold overflow-hidden"
+              >
+                —
+              </div>
+              <div>
+                <p id="profileName" class="font-bold text-slate-800 text-lg">
+                  —
+                </p>
+                <p id="profileNum" class="text-xs text-muted">—</p>
+              </div>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center gap-2 text-slate-600">
+                <span class="material-symbols-rounded text-muted text-base"
+                  >apartment</span
+                >
+                <span id="profileCollege">—</span>
+              </div>
+              <div class="flex items-center gap-2 text-slate-600">
+                <span class="material-symbols-rounded text-muted text-base"
+                  >book_2</span
+                >
+                <span id="profileCourse">—</span>
+              </div>
+              <div class="flex items-center gap-2 text-slate-600">
+                <span class="material-symbols-rounded text-muted text-base"
+                  >mail</span
+                >
+                <span id="profileEmail" class="truncate">—</span>
+              </div>
+            </div>
+            <a
+              href="profile.html"
+              class="mt-4 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-brand/30 text-brand text-sm font-semibold hover:bg-brand/5 transition-colors"
+            >
+              <span class="material-symbols-rounded text-base">edit</span>
+              Edit Profile
+            </a>
+          </div>
+
+          <!-- Matched Mentor -->
+          <div class="bg-white rounded-2xl card-glow px-6 py-6 fade-up-3">
+            <h3
+              class="text-xs font-bold uppercase tracking-widest text-muted mb-4"
+            >
+              My Mentor
+            </h3>
+            <div id="mentorCard">
+              <div class="text-center py-6 text-muted text-sm">
+                Loading mentor info…
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div
+            class="bg-gradient-to-br from-brand to-purple-400 rounded-2xl px-6 py-5 text-white fade-up-4"
+          >
+            <div class="flex items-center gap-2 mb-3">
+              <span class="material-symbols-rounded">tune</span>
+              <h3 class="font-semibold">My Preferences</h3>
+            </div>
+            <div class="space-y-2 text-sm text-purple-100" id="preferencesArea">
+              <p>Loading preferences…</p>
+            </div>
+            <a
+              href="preferences.html"
+              class="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-white/80 hover:text-white"
+            >
+              Update preferences
+              <span class="material-symbols-rounded text-sm"
+                >arrow_forward</span
+              >
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/studentdashboard.js"></script>
+  </body>
+</html>

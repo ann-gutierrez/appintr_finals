@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MentorMatch — Mentor Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:wght,FILL@400,1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: "#0F1623",
+              steel: "#1E2B3C",
+              slate2: "#2E3D52",
+              teal: "#0ABFB8",
+              amber2: "#F59E0B",
+              chalk: "#F4F6F9",
+            },
+            fontFamily: {
+              sans: ['"Sora"', "sans-serif"],
+              mono: ['"JetBrains Mono"', "monospace"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Sora", sans-serif;
+        background: #f4f6f9;
+      }
+      .material-symbols-rounded {
+        font-variation-settings:
+          "FILL" 1,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .topbar {
+        background: linear-gradient(90deg, #0f1623 0%, #1e2b3c 100%);
+      }
+      .card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 2px 16px rgba(15, 22, 35, 0.07);
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(-12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .slide-in {
+        animation: slideIn 0.4s ease both;
+      }
+      .slide-in-2 {
+        animation: slideIn 0.4s ease 0.08s both;
+      }
+      .slide-in-3 {
+        animation: slideIn 0.4s ease 0.16s both;
+      }
+      .slide-in-4 {
+        animation: slideIn 0.4s ease 0.24s both;
+      }
+      .day-col {
+        border-right: 1px solid #e5e9f0;
+        min-width: 120px;
+      }
+      .day-col:last-child {
+        border-right: none;
+      }
+      .session-slot {
+        border-left: 3px solid #0abfb8;
+      }
+      .msg-bubble-mentor {
+        background: #0f1623;
+        color: white;
+        border-radius: 1rem 1rem 0.25rem 1rem;
+      }
+      .msg-bubble-student {
+        background: #e9f7f7;
+        color: #0f1623;
+        border-radius: 1rem 1rem 1rem 0.25rem;
+      }
+      .status-dot {
+        display: inline-block;
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen">
+    <!-- Top Navbar (dark) -->
+    <nav
+      class="topbar sticky top-0 z-40 h-16 flex items-center justify-between px-6"
+    >
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2.5">
+          <div
+            class="h-8 w-8 rounded-lg bg-teal/20 border border-teal/40 flex items-center justify-center"
+          >
+            <span class="material-symbols-rounded text-teal text-lg"
+              >school</span
+            >
+          </div>
+          <span class="font-bold text-white tracking-tight">MentorMatch</span>
+        </div>
+        <div class="h-5 w-px bg-white/10 mx-1"></div>
+        <span class="text-white/50 text-sm font-medium">Mentor Portal</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button
+          class="relative h-9 w-9 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+        >
+          <span class="material-symbols-rounded text-white/70 text-xl"
+            >notifications</span
+          >
+          <span
+            id="notifDot"
+            class="hidden absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-amber2 border border-ink"
+          ></span>
+        </button>
+        <div class="flex items-center gap-2.5 pl-3 border-l border-white/10">
+          <div class="flex flex-col items-end leading-tight">
+            <span id="navName" class="text-sm font-semibold text-white">—</span>
+            <span class="text-[10px] text-white/40 font-mono">MENTOR</span>
+          </div>
+          <div
+            id="navAvatar"
+            class="h-9 w-9 rounded-full bg-teal/20 border border-teal/40 text-teal flex items-center justify-center font-bold text-sm overflow-hidden"
+          ></div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        <!-- LEFT COLUMN: Profile + Stats + Availability -->
+        <div class="xl:col-span-1 space-y-5">
+          <!-- Profile Card -->
+          <div class="card px-5 py-6 slide-in">
+            <div class="flex flex-col items-center text-center gap-2 mb-5">
+              <div
+                id="profilePhoto"
+                class="h-20 w-20 rounded-2xl bg-ink/10 text-ink flex items-center justify-center font-bold text-2xl overflow-hidden"
+              >
+                —
+              </div>
+              <div>
+                <p
+                  id="profileName"
+                  class="font-bold text-ink text-lg leading-tight"
+                >
+                  —
+                </p>
+                <p
+                  id="profileNum"
+                  class="text-xs text-gray-400 font-mono mt-0.5"
+                >
+                  —
+                </p>
+              </div>
+              <div
+                class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal/10 border border-teal/20"
+              >
+                <span class="status-dot bg-teal"></span>
+                <span class="text-xs font-semibold text-teal"
+                  >Active Mentor</span
+                >
+              </div>
+            </div>
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center gap-2 text-gray-600">
+                <span class="material-symbols-rounded text-gray-400 text-base"
+                  >apartment</span
+                >
+                <span id="profileDept">—</span>
+              </div>
+              <div class="flex items-center gap-2 text-gray-600">
+                <span class="material-symbols-rounded text-gray-400 text-base"
+                  >mail</span
+                >
+                <span id="profileEmail" class="truncate">—</span>
+              </div>
+              <div class="flex items-center gap-2 text-gray-600">
+                <span class="material-symbols-rounded text-gray-400 text-base"
+                  >phone</span
+                >
+                <span id="profilePhone">—</span>
+              </div>
+            </div>
+            <!-- Expertise tags -->
+            <div id="expertiseTags" class="flex flex-wrap gap-1.5 mt-4"></div>
+            <a
+              href="profile.html"
+              class="mt-4 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-ink/20 text-ink text-sm font-semibold hover:bg-ink hover:text-white transition-colors"
+            >
+              <span class="material-symbols-rounded text-base">edit</span>
+              Edit Profile
+            </a>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="card px-5 py-5 slide-in-2">
+            <h3
+              class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4"
+            >
+              This Month
+            </h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-rounded text-teal text-lg"
+                    >event</span
+                  >
+                  Total Sessions
+                </div>
+                <span id="statTotal" class="font-bold font-mono text-ink"
+                  >—</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <span
+                    class="material-symbols-rounded text-emerald-500 text-lg"
+                    >check_circle</span
+                  >
+                  Completed
+                </div>
+                <span id="statDone" class="font-bold font-mono text-ink"
+                  >—</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-rounded text-amber2 text-lg"
+                    >schedule</span
+                  >
+                  Upcoming
+                </div>
+                <span id="statUpcoming" class="font-bold font-mono text-ink"
+                  >—</span
+                >
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <span class="material-symbols-rounded text-blue-400 text-lg"
+                    >group</span
+                  >
+                  Students
+                </div>
+                <span id="statStudents" class="font-bold font-mono text-ink"
+                  >—</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Availability -->
+          <div class="card px-5 py-5 slide-in-3">
+            <div class="flex items-center justify-between mb-4">
+              <h3
+                class="text-[10px] font-bold uppercase tracking-widest text-gray-400"
+              >
+                My Availability
+              </h3>
+              <a
+                href="availability.html"
+                class="text-xs font-semibold text-teal hover:underline"
+                >Edit</a
+              >
+            </div>
+            <div id="availabilityList" class="space-y-2">
+              <p class="text-sm text-gray-400">Loading…</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: Weekly Schedule + Student List -->
+        <div class="xl:col-span-2 space-y-5">
+          <!-- Weekly Schedule -->
+          <div class="card overflow-hidden slide-in-2">
+            <div
+              class="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-ink"
+                  >calendar_view_week</span
+                >
+                <h2 class="font-semibold text-ink">Weekly Schedule</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <button
+                  id="prevWeek"
+                  class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                >
+                  <span class="material-symbols-rounded text-gray-400 text-lg"
+                    >chevron_left</span
+                  >
+                </button>
+                <span
+                  id="weekLabel"
+                  class="text-xs font-mono font-semibold text-gray-500 min-w-[120px] text-center"
+                  >—</span
+                >
+                <button
+                  id="nextWeek"
+                  class="h-8 w-8 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-colors"
+                >
+                  <span class="material-symbols-rounded text-gray-400 text-lg"
+                    >chevron_right</span
+                  >
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto scrollbar-hide">
+              <div
+                id="weekGrid"
+                class="flex min-w-[600px] divide-x divide-gray-100"
+              >
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- My Students -->
+          <div class="card overflow-hidden slide-in-3">
+            <div
+              class="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+            >
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-rounded text-ink">group</span>
+                <h2 class="font-semibold text-ink">My Students</h2>
+              </div>
+              <span id="studentCount" class="text-xs font-mono text-gray-400"
+                >— students</span
+              >
+            </div>
+            <div id="studentsList" class="divide-y divide-gray-50">
+              <div class="py-8 text-center text-sm text-gray-400">Loading…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Conversations -->
+        <div class="xl:col-span-1 space-y-5">
+          <!-- Conversations Panel -->
+          <div
+            class="card overflow-hidden slide-in-3 flex flex-col"
+            style="height: 560px"
+          >
+            <div class="px-5 py-4 border-b border-gray-100">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="material-symbols-rounded text-ink">chat</span>
+                <h2 class="font-semibold text-ink">Conversations</h2>
+              </div>
+              <!-- Conversation list -->
+              <div
+                id="convList"
+                class="space-y-1 max-h-36 overflow-y-auto scrollbar-hide"
+              >
+                <p class="text-xs text-gray-400 py-2">Loading conversations…</p>
+              </div>
+            </div>
+            <!-- Message thread -->
+            <div
+              class="flex-1 overflow-y-auto px-5 py-4 space-y-3 scrollbar-hide"
+              id="msgThread"
+            >
+              <div class="text-center text-xs text-gray-300 py-8">
+                Select a conversation to view messages.
+              </div>
+            </div>
+            <!-- Composer -->
+            <div class="px-5 py-3 border-t border-gray-100">
+              <div class="flex gap-2">
+                <input
+                  id="msgInput"
+                  type="text"
+                  placeholder="Type a message…"
+                  maxlength="300"
+                  class="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm outline-none focus:border-teal focus:ring-2 focus:ring-teal/20 bg-gray-50"
+                  disabled
+                />
+                <button
+                  id="msgSend"
+                  disabled
+                  class="h-10 w-10 rounded-xl bg-ink flex items-center justify-center text-white hover:bg-steel transition-colors disabled:opacity-40"
+                >
+                  <span class="material-symbols-rounded text-lg">send</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Alerts -->
+          <div class="card px-5 py-5 slide-in-4">
+            <h3
+              class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-4"
+            >
+              Today's Alerts
+            </h3>
+            <div id="alertsList" class="space-y-3">
+              <p class="text-sm text-gray-400">Loading…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/mentordashboard.js"></script>
+  </body>
+</html>
