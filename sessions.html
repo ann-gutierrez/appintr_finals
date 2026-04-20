@@ -1,0 +1,959 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MentorMatch — Sessions</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3211d4",
+              "background-dark": "#131022",
+            },
+            fontFamily: { display: ["Inter", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+        vertical-align: middle;
+      }
+
+      /* ── Page background ── */
+      .bg-page {
+        background: #131022;
+        background-image:
+          radial-gradient(
+            ellipse 80% 60% at 50% -10%,
+            rgba(50, 17, 212, 0.35) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            circle at 80% 90%,
+            rgba(50, 17, 212, 0.15) 0%,
+            transparent 50%
+          );
+        min-height: 100vh;
+      }
+
+      /* ── Sidebar ── */
+      .sidebar {
+        width: 240px;
+        min-height: 100vh;
+        background: rgba(255, 255, 255, 0.025);
+        border-right: 1.5px solid rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 50;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 0.625rem;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .nav-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .nav-item.active {
+        background: rgba(50, 17, 212, 0.25);
+        color: #a78bfa;
+      }
+      .nav-item.active .material-symbols-outlined {
+        color: #a78bfa;
+      }
+
+      /* ── Glass card ── */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        border-radius: 1.25rem;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+      }
+
+      /* ── Fields ── */
+      .field {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        color: rgb(120, 152, 255);
+        padding: 0.65rem 1rem;
+        font-size: 0.875rem;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+      .field::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+      }
+      .field:focus {
+        border-color: #3211d4;
+        box-shadow: 0 0 0 3px rgba(50, 17, 212, 0.2);
+      }
+      .field.error-field {
+        border-color: rgba(239, 68, 68, 0.6);
+      }
+      select.field option {
+        background: #1e1a35;
+        color: white;
+      }
+
+      .field-label {
+        display: block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: rgba(255, 255, 255, 0.45);
+        margin-bottom: 0.4rem;
+      }
+      .field-label .required {
+        color: #a78bfa;
+        margin-left: 2px;
+      }
+      .field-error {
+        font-size: 0.7rem;
+        color: #fca5a5;
+        margin-top: 0.3rem;
+        display: none;
+      }
+      .field-error.visible {
+        display: block;
+      }
+
+      /* ── Buttons ── */
+      .btn-primary {
+        background: #3211d4;
+        color: white;
+        border-radius: 0.75rem;
+        padding: 0.65rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: #2a0db8;
+      }
+      .btn-primary:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      .btn-primary:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.6);
+        border: 1.5px solid rgba(255, 255, 255, 0.1);
+        border-radius: 0.75rem;
+        padding: 0.65rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+        white-space: nowrap;
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1.5px solid rgba(239, 68, 68, 0.3);
+        border-radius: 0.75rem;
+        padding: 0.65rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: "Inter", sans-serif;
+      }
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25);
+      }
+
+      /* ── Messages ── */
+      .msg {
+        border-radius: 0.625rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        display: none;
+        margin-bottom: 1rem;
+        align-items: center;
+        gap: 8px;
+      }
+      .msg.error {
+        background: rgba(239, 68, 68, 0.15);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: #fca5a5;
+        display: flex;
+      }
+      .msg.success {
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #6ee7b7;
+        display: flex;
+      }
+
+      /* ── Status badges ── */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .badge-scheduled {
+        background: rgba(50, 17, 212, 0.2);
+        color: #a78bfa;
+        border: 1px solid rgba(50, 17, 212, 0.35);
+      }
+      .badge-completed {
+        background: rgba(16, 185, 129, 0.15);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+      .badge-cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+      }
+
+      /* ── Session row cards ── */
+      .session-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-radius: 0.875rem;
+        border: 1.5px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.025);
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .session-row:hover {
+        border-color: rgba(50, 17, 212, 0.3);
+        background: rgba(50, 17, 212, 0.05);
+      }
+
+      /* ── Stat card ── */
+      .stat-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1.5px solid rgba(255, 255, 255, 0.07);
+        border-radius: 1rem;
+        padding: 18px 20px;
+      }
+
+      /* ── Modal backdrop ── */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 8, 25, 0.75);
+        backdrop-filter: blur(6px);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-backdrop.hidden {
+        display: none;
+      }
+
+      .modal-box {
+        background: #1a1630;
+        border: 1.5px solid rgba(255, 255, 255, 0.09);
+        border-radius: 1.25rem;
+        box-shadow: 0 32px 96px rgba(0, 0, 0, 0.6);
+        width: 100%;
+        max-width: 540px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 32px;
+        animation: modalIn 0.25s ease both;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.96) translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      /* ── Empty state ── */
+      .empty-state {
+        text-align: center;
+        padding: 56px 24px;
+      }
+
+      /* ── Search / filter bar ── */
+      .search-field {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1.5px solid rgba(255, 255, 255, 0.09);
+        border-radius: 0.75rem;
+        color: rgba(255, 255, 255, 0.8);
+        padding: 0.6rem 1rem 0.6rem 2.5rem;
+        font-size: 0.8125rem;
+        outline: none;
+        transition: border-color 0.2s;
+        font-family: "Inter", sans-serif;
+        width: 220px;
+      }
+      .search-field::placeholder {
+        color: rgba(255, 255, 255, 0.25);
+      }
+      .search-field:focus {
+        border-color: #3211d4;
+      }
+
+      /* ── Confirm delete modal ── */
+      .confirm-box {
+        background: #1a1630;
+        border: 1.5px solid rgba(239, 68, 68, 0.2);
+        border-radius: 1.25rem;
+        box-shadow: 0 32px 96px rgba(0, 0, 0, 0.6);
+        width: 100%;
+        max-width: 400px;
+        padding: 28px;
+        animation: modalIn 0.25s ease both;
+      }
+
+      /* ── Tabs ── */
+      .tab-btn {
+        padding: 6px 16px;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.4);
+        transition: all 0.2s;
+        font-family: "Inter", sans-serif;
+      }
+      .tab-btn.active {
+        background: rgba(50, 17, 212, 0.25);
+        color: #a78bfa;
+      }
+      .tab-btn:hover:not(.active) {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      /* ── Animations ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.45s ease both;
+      }
+      .fade-up-2 {
+        animation: fadeUp 0.45s 0.08s ease both;
+      }
+      .fade-up-3 {
+        animation: fadeUp 0.45s 0.16s ease both;
+      }
+
+      /* ── Skeleton loader ── */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.04) 25%,
+          rgba(255, 255, 255, 0.08) 50%,
+          rgba(255, 255, 255, 0.04) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.4s infinite;
+        border-radius: 6px;
+      }
+      @keyframes shimmer {
+        from {
+          background-position: 200% 0;
+        }
+        to {
+          background-position: -200% 0;
+        }
+      }
+
+      /* ── Scrollbar ── */
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s;
+        }
+        .sidebar.open {
+          transform: translateX(0);
+        }
+        .main-content {
+          margin-left: 0 !important;
+        }
+        .session-row {
+          grid-template-columns: 1fr;
+        }
+        .search-field {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-page">
+    <!-- ══════════ SIDEBAR ══════════ -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+      <div class="px-5 py-6 border-b border-white/5">
+        <div class="flex items-center gap-3">
+          <div
+            class="h-9 w-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-violet-400 text-xl"
+              >school</span
+            >
+          </div>
+          <div>
+            <p class="text-sm font-bold text-white leading-none">MentorMatch</p>
+            <p class="text-[10px] text-white/30 mt-0.5">Academic Year 25/26</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nav -->
+      <nav class="flex-1 px-3 py-4 space-y-1">
+        <a href="logindashboard.html" class="nav-item">
+          <span class="material-symbols-outlined text-xl">dashboard</span>
+          Dashboard
+        </a>
+        <a href="sessions.html" class="nav-item active">
+          <span class="material-symbols-outlined text-xl">calendar_month</span>
+          Sessions
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined text-xl">group</span>
+          Mentors
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined text-xl">school</span>
+          Students
+        </a>
+        <a href="#" class="nav-item">
+          <span class="material-symbols-outlined text-xl">bar_chart</span>
+          Reports
+        </a>
+      </nav>
+
+      <!-- User strip -->
+      <div class="px-4 py-4 border-t border-white/5">
+        <div class="flex items-center gap-3">
+          <div
+            class="h-8 w-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-violet-300"
+            id="sidebarAvatar"
+          >
+            —
+          </div>
+          <div class="flex-1 min-w-0">
+            <p
+              class="text-xs font-semibold text-white/70 truncate"
+              id="sidebarName"
+            >
+              Loading…
+            </p>
+            <p class="text-[10px] text-white/30 truncate" id="sidebarRole">—</p>
+          </div>
+          <a
+            href="logindashboard.html"
+            class="text-white/30 hover:text-white/60 transition-colors"
+            title="Logout"
+          >
+            <span class="material-symbols-outlined text-lg">logout</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ══════════ MAIN ══════════ -->
+    <main
+      class="main-content"
+      style="margin-left: 240px; min-height: 100vh; padding: 32px 28px"
+    >
+      <!-- Mobile header -->
+      <div class="flex items-center gap-3 mb-6 md:hidden">
+        <button id="sidebarToggle" class="text-white/50 hover:text-white">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+        <p class="text-white font-bold">Sessions</p>
+      </div>
+
+      <!-- Page header -->
+      <div
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 fade-up"
+      >
+        <div>
+          <h1 class="text-2xl font-bold text-white tracking-tight">Sessions</h1>
+          <p class="text-sm text-white/40 mt-0.5">
+            Manage and track all mentoring sessions
+          </p>
+        </div>
+        <button class="btn-primary" id="openBookModal">
+          <span class="material-symbols-outlined text-lg">add</span>
+          Book Session
+        </button>
+      </div>
+
+      <!-- Global msg -->
+      <div class="msg" id="globalMsg">
+        <span class="material-symbols-outlined text-lg" id="globalMsgIcon"
+          >info</span
+        >
+        <span id="globalMsgText"></span>
+      </div>
+
+      <!-- ── Stat cards ── -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6 fade-up-2">
+        <div class="stat-card">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2"
+          >
+            Total
+          </p>
+          <p class="text-2xl font-bold text-white" id="statTotal">—</p>
+          <p class="text-xs text-white/40 mt-1">All sessions</p>
+        </div>
+        <div class="stat-card">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2"
+          >
+            Scheduled
+          </p>
+          <p class="text-2xl font-bold text-violet-400" id="statScheduled">—</p>
+          <p class="text-xs text-white/40 mt-1">Upcoming</p>
+        </div>
+        <div class="stat-card">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2"
+          >
+            Completed
+          </p>
+          <p class="text-2xl font-bold text-emerald-400" id="statCompleted">
+            —
+          </p>
+          <p class="text-xs text-white/40 mt-1">Done</p>
+        </div>
+        <div class="stat-card">
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/30 mb-2"
+          >
+            Cancelled
+          </p>
+          <p class="text-2xl font-bold text-red-400" id="statCancelled">—</p>
+          <p class="text-xs text-white/40 mt-1">Cancelled</p>
+        </div>
+      </div>
+
+      <!-- ── Filter + Search bar ── -->
+      <div class="glass-card px-5 py-4 mb-4 fade-up-3">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+          <!-- Tabs -->
+          <div class="flex items-center gap-1 bg-white/5 rounded-lg p-1">
+            <button class="tab-btn active" data-filter="all">All</button>
+            <button class="tab-btn" data-filter="scheduled">Scheduled</button>
+            <button class="tab-btn" data-filter="completed">Completed</button>
+            <button class="tab-btn" data-filter="cancelled">Cancelled</button>
+          </div>
+
+          <div class="flex-1"></div>
+
+          <!-- Search -->
+          <div class="relative">
+            <span
+              class="material-symbols-outlined text-white/30 text-lg absolute left-2.5 top-1/2 -translate-y-1/2"
+              >search</span
+            >
+            <input
+              type="text"
+              id="searchInput"
+              class="search-field"
+              placeholder="Search sessions…"
+            />
+          </div>
+
+          <!-- Date filter -->
+          <input
+            type="date"
+            id="dateFilter"
+            class="field"
+            style="width: auto; padding: 0.6rem 0.85rem"
+          />
+          <button class="btn-ghost text-xs" id="clearFilters">
+            <span class="material-symbols-outlined text-base"
+              >filter_list_off</span
+            >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Session list ── -->
+      <div class="glass-card p-5 fade-up-3">
+        <!-- Column headers -->
+        <div
+          class="grid grid-cols-5 gap-3 px-4 mb-3 hidden sm:grid"
+          style="grid-template-columns: 1fr 1fr auto auto auto"
+        >
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/25"
+          >
+            Student
+          </p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/25"
+          >
+            Mentor
+          </p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/25"
+          >
+            Date & Time
+          </p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/25"
+          >
+            Status
+          </p>
+          <p
+            class="text-[10px] font-bold uppercase tracking-widest text-white/25"
+          >
+            Actions
+          </p>
+        </div>
+
+        <!-- Skeleton -->
+        <div id="skeletonList" class="space-y-3">
+          <div class="session-row opacity-60">
+            <div class="skeleton h-5 w-32 rounded"></div>
+            <div class="skeleton h-5 w-28 rounded"></div>
+            <div class="skeleton h-5 w-28 rounded"></div>
+            <div class="skeleton h-5 w-16 rounded-full"></div>
+            <div class="skeleton h-8 w-20 rounded-lg"></div>
+          </div>
+          <div class="session-row opacity-40">
+            <div class="skeleton h-5 w-28 rounded"></div>
+            <div class="skeleton h-5 w-24 rounded"></div>
+            <div class="skeleton h-5 w-28 rounded"></div>
+            <div class="skeleton h-5 w-16 rounded-full"></div>
+            <div class="skeleton h-8 w-20 rounded-lg"></div>
+          </div>
+          <div class="session-row opacity-20">
+            <div class="skeleton h-5 w-36 rounded"></div>
+            <div class="skeleton h-5 w-20 rounded"></div>
+            <div class="skeleton h-5 w-28 rounded"></div>
+            <div class="skeleton h-5 w-16 rounded-full"></div>
+            <div class="skeleton h-8 w-20 rounded-lg"></div>
+          </div>
+        </div>
+
+        <!-- Session rows -->
+        <div id="sessionList" class="space-y-3 hidden"></div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="empty-state hidden">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 rounded-full bg-white/5 border border-white/8 mb-4"
+          >
+            <span class="material-symbols-outlined text-3xl text-white/20"
+              >calendar_off</span
+            >
+          </div>
+          <p class="text-white/50 font-semibold mb-1">No sessions found</p>
+          <p class="text-xs text-white/25">
+            Try adjusting your filters or book a new session.
+          </p>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          class="flex items-center justify-between mt-5 pt-4 border-t border-white/5"
+          id="paginationRow"
+        >
+          <p class="text-xs text-white/30" id="paginationInfo">—</p>
+          <div class="flex items-center gap-2">
+            <button class="btn-ghost text-xs py-1.5 px-3" id="prevPage">
+              <span class="material-symbols-outlined text-sm"
+                >chevron_left</span
+              >
+            </button>
+            <span class="text-xs text-white/50" id="pageIndicator">1</span>
+            <button class="btn-ghost text-xs py-1.5 px-3" id="nextPage">
+              <span class="material-symbols-outlined text-sm"
+                >chevron_right</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ══════════ BOOK / EDIT SESSION MODAL ══════════ -->
+    <div class="modal-backdrop hidden" id="sessionModal">
+      <div class="modal-box">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div
+              class="h-9 w-9 rounded-xl bg-primary/20 flex items-center justify-center"
+            >
+              <span
+                class="material-symbols-outlined text-violet-400 text-xl"
+                id="modalIcon"
+                >calendar_add_on</span
+              >
+            </div>
+            <div>
+              <p class="text-base font-bold text-white" id="modalTitle">
+                Book Session
+              </p>
+              <p class="text-xs text-white/40" id="modalSub">
+                Schedule a new mentoring session
+              </p>
+            </div>
+          </div>
+          <button
+            class="text-white/30 hover:text-white/70 transition-colors"
+            id="closeModal"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <!-- Modal global msg -->
+        <div class="msg mb-4" id="modalMsg">
+          <span class="material-symbols-outlined text-lg" id="modalMsgIcon"
+            >info</span
+          >
+          <span id="modalMsgText"></span>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Student -->
+          <div>
+            <label class="field-label"
+              >Student <span class="required">*</span></label
+            >
+            <select id="modal_student" class="field">
+              <option value="">Select a student…</option>
+            </select>
+            <p class="field-error" id="err_student">Please select a student.</p>
+          </div>
+
+          <!-- Mentor -->
+          <div>
+            <label class="field-label"
+              >Mentor <span class="required">*</span></label
+            >
+            <select id="modal_mentor" class="field">
+              <option value="">Select a mentor…</option>
+            </select>
+            <p class="field-error" id="err_mentor">Please select a mentor.</p>
+          </div>
+
+          <!-- Date -->
+          <div>
+            <label class="field-label"
+              >Session Date <span class="required">*</span></label
+            >
+            <input type="date" id="modal_date" class="field" />
+            <p class="field-error" id="err_date">Date is required.</p>
+          </div>
+
+          <!-- Time row -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="field-label"
+                >Start Time <span class="required">*</span></label
+              >
+              <input type="time" id="modal_start_time" class="field" />
+              <p class="field-error" id="err_start_time">
+                Start time is required.
+              </p>
+            </div>
+            <div>
+              <label class="field-label"
+                >End Time <span class="required">*</span></label
+              >
+              <input type="time" id="modal_end_time" class="field" />
+              <p class="field-error" id="err_end_time">End time is required.</p>
+            </div>
+          </div>
+
+          <!-- Status (edit mode only) -->
+          <div id="statusRow" class="hidden">
+            <label class="field-label">Status</label>
+            <select id="modal_status" class="field">
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 flex items-center justify-between gap-3">
+          <button class="btn-ghost flex-shrink-0" id="cancelModal">
+            Cancel
+          </button>
+          <button class="btn-primary flex-1" id="saveSessionBtn">
+            <span class="material-symbols-outlined text-lg">save</span>
+            <span id="saveSessionText">Book Session</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ DELETE CONFIRM MODAL ══════════ -->
+    <div class="modal-backdrop hidden" id="deleteModal">
+      <div class="confirm-box">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="h-10 w-10 rounded-xl bg-red-500/15 border border-red-500/25 flex items-center justify-center flex-shrink-0"
+          >
+            <span class="material-symbols-outlined text-red-400 text-xl"
+              >delete_forever</span
+            >
+          </div>
+          <div>
+            <p class="text-sm font-bold text-white">Cancel Session</p>
+            <p class="text-xs text-white/40">This action cannot be undone.</p>
+          </div>
+        </div>
+        <p class="text-sm text-white/60 mb-6" id="deleteConfirmText">
+          Are you sure you want to cancel this session?
+        </p>
+        <div class="flex gap-3">
+          <button class="btn-ghost flex-1" id="cancelDeleteBtn">Go back</button>
+          <button class="btn-danger flex-1" id="confirmDeleteBtn">
+            <span class="material-symbols-outlined text-base">delete</span>
+            Cancel Session
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ VIEW DETAIL MODAL ══════════ -->
+    <div class="modal-backdrop hidden" id="viewModal">
+      <div class="modal-box" style="max-width: 460px">
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <div
+              class="h-9 w-9 rounded-xl bg-primary/20 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-violet-400 text-xl"
+                >event_note</span
+              >
+            </div>
+            <p class="text-base font-bold text-white">Session Details</p>
+          </div>
+          <button
+            class="text-white/30 hover:text-white/70 transition-colors"
+            id="closeViewModal"
+          >
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+        <div id="viewModalBody" class="space-y-4"></div>
+        <div class="mt-6 flex justify-end">
+          <button class="btn-ghost" id="closeViewModalBtn">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/sessions.js"></script>
+  </body>
+</html>

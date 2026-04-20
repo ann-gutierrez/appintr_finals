@@ -187,8 +187,9 @@ function buildQuickTags() {
 
 // ─── Search & filter ──────────────────────────────────────────────────────────
 function sessionCountFor(mentorId) {
-  return allSessions.filter((s) => String(s.mentor) === String(mentorId))
-    .length;
+  return allSessions.filter(
+    (s) => String(s.mentor?.id ?? s.mentor) === String(mentorId),
+  ).length;
 }
 
 function availableDaysFor(mentorId) {
